@@ -3,37 +3,73 @@ package threadpool;
 import java.util.concurrent.*;
 
 public class MyThreadPool {
-    //static ExecutorService newCachedThreadPool()   创建一个默认的线程池
-    //static newFixedThreadPool(int nThreads)	    创建一个指定最多线程数量的线程池
+
+    //Executors --- 可以帮助我们创建线程池对象
+    //ExecutorService --- 可以帮助我们控制线程池
     public static void main(String[] args) {
+        // 缓存线程池
+        // 特点 ： 核心线程数为 0，最大线程数为 Integer.MAX_VALUE，线程空闲 60 秒后回收，使用 SynchronousQueue
+        // 适用场景：适合执行大量短生命周期的异步任务
+        // 潜在风险：线程数上限接近无限，在任务量突增时可能创建大量线程，压榨系统资源
         ExecutorService executorService = Executors.newCachedThreadPool();
+        for (int i = 0; i < 100; i++) {
+            final int taskId = i;
+            executorService.execute(()->{
+                System.out.println("缓存线程" + Thread.currentThread().getName()
+                        + "开始执行任务" + taskId);
+            });
+        }
 
-    //  ExecutorService executorService = Executors.newFixedThreadPool(10);
+        // 固定线程数的线程池
+        // 特点 ： 核心线程数等于最大线程数，不会回收线程，使用无界队列 LinkedBlockingQueue
+        // 适用场景 ： 适合处理固定数量的长期任务，保持稳定的并发度
+        // 潜在风险：使用无界队列，当任务持续快速提交而处理速度较慢时，可能导致队列过大，引发内存溢出(OOM)
+        ExecutorService executorService1 = Executors.newFixedThreadPool(10);
+        for (int i = 0; i < Integer.MAX_VALUE; i++) {
+            final int taskId = i;
+            executorService1.execute(()->{
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("固定线程" + Thread.currentThread().getName()
+                        + "开始执行任务" + taskId);
+            });
+        }
 
-        ThreadPoolExecutor pool = (ThreadPoolExecutor) executorService;
+        // 单线程池
+        // 特点：核心线程数和最大线程数都为 1，使用无界队列 LinkedBlockingQueue
+        // 适用场景：适合需要保证任务顺序执行的场景，如日志记录系统
+       // 潜在风险：使用无界队列，任务堆积可能导致 OOM；单线程执行效率有限
+        ExecutorService executorService2 = Executors.newSingleThreadExecutor();
 
-        System.out.println(pool.getPoolSize()); // 0
-
-        //Executors --- 可以帮助我们创建线程池对象
-        //ExecutorService --- 可以帮助我们控制线程池
-        executorService.submit(()->{
-            System.out.println(Thread.currentThread().getName() + "在执行");
-        });
-
-
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        for (int i = 0; i < 10; i++) {
+            final int taskId = i;
+            executorService2.execute(()->{
+                System.out.println("单线程" + Thread.currentThread().getName()
+                        + "开始执行任务" + taskId);
+            });
         }
 
 
-        executorService.submit(()->{
-            System.out.println(Thread.currentThread().getName() + "在执行");
-        });
-        System.out.println(pool.getPoolSize()); // 2
-      //  executorService.shutdown();*/
+        // 定时线程
+        // 特点：支持定时及周期性任务执行，核心线程数固定，最大线程数为 Integer.MAX_VALUE
+        // 适用场景：需要执行定时任务或周期性任务的场景
+        // 潜在风险：使用 DelayedWorkQueue 可能堆积大量待执行任务，导致内存压力
+        ScheduledExecutorService executorService3 = Executors.newScheduledThreadPool(5);
+        for (int i = 0; i < 10; i++) {
+            final int taskId = i;
+            executorService3.schedule(()->{
+                System.out.println("定时线程" + Thread.currentThread().getName()
+                        + "开始执行任务" + taskId);
+            },3,TimeUnit.SECONDS); // 三秒后执行
+        }
 
+        // ArrayBlockingQueue ： 基于数组的有界阻塞队列，必须指定队列大小  适用场景：明确知道任务量的有界场景，可以防止资源耗尽
+        // SynchronousQueue 队列 ： take 和 put都阻塞，无容量，直接交付任务  适用场景： 需快速响应的场景
+        // LinkedBlockingQueue ：可指定容量的链表队列   需设置容量避免 OOM
+        // DelayedWorkQueue ： 延迟获取元素的无界队列  使用场景 ： 延迟任务执行场景
 
         /**
          * 创建线程池对象 :**
