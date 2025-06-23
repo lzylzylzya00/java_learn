@@ -1,6 +1,160 @@
 java
 
-java面向对象
+## java面向对象
+
+面向对象的三大特性 封装 继承 多态
+
+### 封装
+
+封装思想
+
+​		**对象代表什么，就得封装对应的数据，并提供数据对应的行为**
+
+封装代码实现
+
+​	将类的某些信息隐藏在类内部，不允许外部程序直接访问，而是通过该类提供的方法来实现对隐藏信息的操作和访问
+
+​	成员变量private，提供对应的getXxx()/setXxx()方法
+
+
+
+类的定义：对一类事务的抽象
+
+
+
+类的组成：1.属性 事物的特性 --手机的价格 品牌  （类成员变量）
+
+​					2.行为  事务的行为 -- 手机打电话 （类方法）
+
+
+
+类的使用： 类名 对象名 = new 类名（）；
+
+
+
+对象的内存图 ：
+
+有一个手机类java
+
+```java
+public class Phone{
+    String brand;
+    double price;
+    String color;
+    
+    public void call(String who){
+        System.out.println("给" + who + "打电话");
+    }
+}
+
+public classs Demo01PhoneOne{
+    public static void main(){
+        Phone one = new Phone();
+        System.out.println(one.brand);
+        System.out.println(one.price);
+        System.out.println(one.color);
+        
+        one.branch = "苹果"；
+        one.price = 8388；
+        one.color = "黑色"；
+            
+        System.out.println(one.brand);
+        System.out.println(one.price);
+        System.out.println(one.color);
+        
+        one.call("乔布斯");
+            
+    }
+}
+```
+
+![image-20250620105327133](C:\Users\lzy\AppData\Roaming\Typora\typora-user-images\image-20250620105327133.png)
+
+类加载过程：
+
+1.在程序main() 运行之前，方法区最先有数据，把类Phone 和 Demo01PhoneOne 加载到方法区
+
+2.执行main()方法  main方法进栈
+
+3.main方法执行 Phone one = new Phone(); 把 Phone one 放到栈中，把new Phone,放到堆中，并且初始化数据，String null ，double 0.0  ，把方法区的成员方法地址0x333赋值给栈中的成员方法 。把new Phone()也赋值一个地址0x666
+
+4.main方法执行打印语句，one地址 0x666 找到堆中的成员变量。  
+
+5.main方法执行one的赋值，one地址 0x666 找到堆中的成员变量，并且赋值
+
+6.main方法执行打印语句，one地址 0x666 找到堆中的成员变量。
+
+7.main方法执行one.call方法，one地址 0x666找到堆中成员方法的地址0x333,0x333在方法区找到call方法运行。
+
+8.call方法运行，call方法进栈运行，然后打印一句话，运行完后，call方法就会出栈，从内存中释放
+
+9.main方法还没运行完，接下来在运行sendMessage()方法，同理运行完出栈，最后main方法运行完也要出栈，整个程序运行结束
+
+
+
+类中的成员变量和局部
+
+* 类中位置不同：成员变量（类中方法外）局部变量（方法内部或方法声明上）
+* 内存中位置不同：成员变量（堆内存）局部变量（栈内存）
+* 生命周期不同：成员变量（随着对象的存在而存在，随着对象的消失而消失）局部变量（随着方法的调用而存在，醉着方法的调用完毕而消失）
+* 初始化值不同：成员变量（有默认初始化值）局部变量（没有默认初始化值，必须先定义，赋值才能使用）
+
+
+
+类的构造方法
+
+作用：创建对象   Student stu = **new Student();**
+
+格式：
+
+public class 类名{
+
+​        修饰符 类名( 参数 ) {
+
+​        }
+
+}
+
+功能：主要是完成对象数据的初始化
+
+
+
+注意事项：
+
+构造方法的创建
+
+​	如果没有定义构造方法，系统将给出一个默认的无参数构造方法
+
+​	如果定义了构造方法，系统将不再提供默认的构造方法
+
+构造方法的重载
+
+​	如果自定义了带参构造方法，还要使用无参数构造方法，就必须再写一个无参数构造方法
+
+重要功能！
+
+​	可以使用带参构造，为成员变量进行初始化
+
+
+
+public privade this关键字
+
+​	this 本质 ：当前对象的地址 方法调用者的地址
+
+ ![image-20250620114327871](C:\Users\lzy\AppData\Roaming\Typora\typora-user-images\image-20250620114327871.png)
+
+​	
+
+this修饰的变量用于指代成员变量，其主要作用是（区分局部变量和成员变量的重名问题）
+
+* 方法的形参如果与成员变量同名，不带this修饰的变量指的是形参，而不是成员变量
+* 方法的形参没有与成员变量同名，不带this修饰的变量指的是成员变量
+
+
+
+
+
+
 
 ## Java final static关键字
 
