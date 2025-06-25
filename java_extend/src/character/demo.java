@@ -18,9 +18,9 @@ public class demo {
          */
         Zi zi = new Zi();
         System.out.println(zi.num1);
-      //  System.out.println(zi.num2); // 私有的子类无法使用
+     //   System.out.println(zi.num2); // 私有的子类无法使用
         zi.show1();
-       // zi.show2(); // 私有的子类无法使用
+     //   zi.show2(); // 私有的子类无法使用
 
 
         /**
