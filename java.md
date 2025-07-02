@@ -592,9 +592,866 @@ class Student{
 
 ### 多态
 
+​	**多态是出现在继承或者实现关系中的**。
+
+**多态体现的格式**：
+
+```java
+父类类型 变量名 = new 子类/实现类构造器;
+变量名.方法名();
+```
+
+**多态的前提**：
+
+1.有实现（接口）或者继承关系
+
+2.方法必现重写
+
+3.父类引用指向子类对象
+
+**多态使用场景**
+
+代码示例
+
+```Java
+父类：
+public class Person {
+    private String name;
+    private int age;
+
+    空参构造
+    带全部参数的构造
+    get和set方法
+
+    public void show(){
+        System.out.println(name + ", " + age);
+    }
+}
+
+子类1：
+public class Administrator extends Person {
+    @Override
+    public void show() {
+        System.out.println("管理员的信息为：" + getName() + ", " + getAge());
+    }
+}
+
+子类2：
+public class Student extends Person{
+
+    @Override
+    public void show() {
+        System.out.println("学生的信息为：" + getName() + ", " + getAge());
+    }
+}
+
+子类3：
+public class Teacher extends Person{
+
+    @Override
+    public void show() {
+        System.out.println("老师的信息为：" + getName() + ", " + getAge());
+    }
+}
+
+测试类：
+public class Test {
+    public static void main(String[] args) {
+        //创建三个对象，并调用register方法
+
+        Student s = new Student();
+        s.setName("张三");
+        s.setAge(18);
 
 
-### 抽象
+        Teacher t = new Teacher();
+        t.setName("王建国");
+        t.setAge(30);
+
+        Administrator admin = new Administrator();
+        admin.setName("管理员");
+        admin.setAge(35);
+
+
+
+        register(s);
+        register(t);
+        register(admin);
+
+
+    }
+
+
+
+    //这个方法既能接收老师，又能接收学生，还能接收管理员
+    //只能把参数写成这三个类型的父类
+    public static void register(Person p){
+        p.show();
+    }
+}
+```
+
+
+
+```Java
+ 	// 如果没有多态，在下图中register方法只能传递学生对象，其他的Teacher和administrator对象是	无法传递给register方法方法的，在这种情况下，只能定义三个不同的register方法分别接收学生，老师和		管理员。
+    //这个方法既能接收老师，又能接收学生，还能接收管理员
+    //只能把参数写成这三个类型的父类
+    public static void register(Person p){
+        p.show();
+    }
+```
+
+
+
+**多态运行特点**
+
+调用成员变量时：编译看左边，运行看左边
+
+调用成员方法时：编译看左边，运行看右边
+
+```Java
+   Person person = new Student();
+
+        //编译看左边的父类中有没有name这个属性，没有就报错
+        //在实际运行的时候，把父类name属性的值打印出来
+        System.out.println(person.name);
+
+        //编译看左边的父类中有没有show这个方法，没有就报错
+        //在实际运行的时候，运行的是学生子类中的show方法
+        person.show();
+```
+
+**多态的弊端**
+
+ 无法调用子类中特有的方法
+
+```Java
+       Person person = new Student();
+
+        /**
+         * 当使用多态方式调用方法时，首先检查父类中是否有该方法，如果没有，则编译错误。
+         * 也就是说，**不能调用**子类拥有，而父类没有的方法。编译都错误
+         */
+        // 调用不了子类特有的方法
+       // person.show1();
+
+```
+
+解决这个弊端 --- 向下转型
+
+回顾基本数据类型转换
+
+- 自动转换: 范围小的赋值给范围大的.自动完成:double d = 5; 
+
+- 强制转换: 范围大的赋值给范围小的,强制转换:int i = (int)3.14 
+
+  多态的转型分为向上转型（自动转换）与向下转型（强制转换）两种。
+
+**向上转型**：多态本身是子类类型向父类类型向上转换（自动转换）的过程，这个过程是默认的。
+当父类引用指向一个子类对象时，便是向上转型。
+使用格式：
+
+```Java
+父类类型  变量名 = new 子类类型();
+如：Animal a = new Cat();
+```
+
+**向下转型**：父类类型向子类类型向下转换的过程，这个过程是强制的。
+一个已经向上转型的子类对象，将父类引用转为子类引用，可以使用强制类型转换的格式，便是向下转型。
+
+```Java
+子类类型 变量名 = (子类类型) 父类变量名;
+如:Aniaml a = new Cat();
+   Cat c =(Cat) a;  
+```
+
+代码示例 
+
+```Java
+  /**
+         * 转型
+         * **向上转型**：多态本身是子类类型向父类类型向上转换（自动转换）的过程，这个过程是默认的。
+         * 当父类引用指向一个子类对象时，便是向上转型。
+         * 使用格式
+         *
+         * 父类类型  变量名 = new 子类类型();
+         * 如：Animal a = new Cat();
+         *
+         * **向下转型**：父类类型向子类类型向下转换的过程，这个过程是强制的。
+         * 一个已经向上转型的子类对象，将父类引用转为子类引用，可以使用强制类型转换的格式，便是向下转型。
+         *
+         * 子类类型 变量名 = (子类类型) 父类变量名;
+         * 如:Aniaml a = new Cat();
+         *    Cat c =(Cat) a;
+         */
+        Person person = new Student();
+
+        // 使用 student向下转型
+        Student student = (Student) person;
+        student.show1();  // 可以调用student特有的方法了
+
+```
+
+
+
+有可能会转型异常  
+
+instanceof 关键字处理
+
+```Java
+ /**
+         * 为了避免ClassCastException的发生，Java提供了 `instanceof` 关键字，给引用变量做类型的校验，格式如下：
+         * 变量名 instanceof 数据类型
+         * 如果变量属于该数据类型或者其子类类型，返回true。
+         * 如果变量不属于该数据类型或者其子类类型，返回false。
+         */
+
+	// 转型异常  person本来persopn是student类型  现在强转为Teacher类型
+
+        System.out.println(person instanceof Teacher);
+        if (person instanceof Teacher){
+            Teacher teacher = (Teacher) person; 
+        }
+
+
+```
+
+
+
+
+
+
+
+
+
+### 抽象类
+
+引入：
+
+父类可能知道子类应该有哪个功能，但是功能具体怎么实现父类是不清楚的（由子类自己决定），父类只需要提供一个没有方法体的定义即可，具体实现交给子类自己去实现
+
+**Java语法规定，包含抽象方法的类就是抽象类**
+
+- **抽象方法** ： 没有方法体的方法。
+- **抽象类**：包含抽象方法的类。
+
+
+
+抽象方法
+
+```java
+修饰符 abstract 返回值类型 方法名 (参数列表)；
+```
+
+抽象类
+
+```java
+abstract class 类名字 { }
+
+```
+
+**abstract是抽象的意思，用于修饰方法方法和类，修饰的方法是抽象方法，修饰的类是抽象类。**
+
+### 
+
+抽象类的使用
+
+抽象类Employee
+
+```Java
+/**
+ * 引入：
+ *父类可能知道子类应该有哪个功能，但是功能具体怎么实现父类是不清楚的（由子类自己决定），父类只需要提供一个没有方法体的定义即可，具体实现交给子类自己去实现
+ * 定义：
+ * *我们把没有方法体的方法称为抽象方法。Java语法规定，包含抽象方法的类就是抽象类*
+ *
+ * - **抽象方法** ： 没有方法体的方法。
+ *定义格式：
+ * 修饰符 abstract 返回值类型 方法名 (参数列表)；
+ * public abstract void run()；
+ *
+ * - **抽象类**：包含抽象方法的类。 如果一个类包含抽象方法，那么该类必须是抽象类。**注意：抽象类不一定有抽象方法，但是有抽象方法的类必须定义成抽象类
+ *
+ * 定义格式：
+ *abstract class 类名字 {
+ *
+ * }
+ *
+ * 抽象类的使用
+ *
+ * **要求**：继承抽象类的子类**必须重写父类所有的抽象方法**。否则，该子类也必须声明为抽象类
+ *
+ * 意义 ： 抽象类存在的意义是为了被子类继承，否则抽象类将毫无意义。抽象类可以强制让子类，一定要按照规定的格式进行重写
+ */
+public abstract class Employee {
+    private String id;
+    private String name;
+    private double salary;
+
+    public Employee(){}
+
+    public Employee(String id, String name, double salary) {
+        this.id = id;
+        this.name = name;
+        this.salary = salary;
+    }
+
+    // 抽象方法
+    // 抽象方法必须要放在抽象类中
+    public abstract void work();
+
+}
+
+```
+
+实现类Cook
+
+```java
+public class Cook extends Employee{
+
+    public Cook() {
+    }
+
+    public Cook(String id, String name, double salary) {
+        super(id, name, salary);
+    }
+
+    @Override
+    public void work() {
+        System.out.println("我是厨师");
+
+    }
+}
+```
+
+实现类Manager
+
+```Java
+public class Manager extends Employee{
+
+    public Manager() {
+    }
+
+    public Manager(String id, String name, double salary) {
+        super(id, name, salary);
+    }
+
+    @Override
+    public void work() {
+        System.out.println("我是管理员");
+
+    }
+}
+```
+
+测试类
+
+```Java
+public class AbstractClassTest {
+    public static void main(String[] args) {
+        // 创建抽象类,抽象类不能创建对象
+        // 假设抽象类让我们创建对象,里面的抽象方法没有方法体,无法执行.所以不让我们创建对象
+       // Employee e = new Employee();
+
+        // 创建子类
+        Manager manager = new Manager();
+        manager.work();
+
+        Cook cook = new Cook();
+        cook.work();
+
+    }
+}
+
+```
+
+**抽象类的特征**
+
+抽象类得到了拥有抽象方法的能力
+
+抽象类失去了创建对象的能力
+
+抽象类存在的意义是为了被子类继承，否则抽象类将毫无意义
+
+### 接口
+
+抽象类中可以用抽象方法，也可以有普通方法，构造方法，成员变量
+
+那么什么是接口呢？  接口是更加彻底的抽象
+
+定义格式
+
+```Java
+//接口的定义格式：
+interface 接口名称{
+    // 抽象方法
+}
+```
+
+特点：在java jdk7 包括之前  接口中的**只有**包含：抽象方法和常量
+
+接口中的常量 ： 在接口中定义的成员变量默认会加上： public static final修饰
+
+接口中的方法 ： public abstract修饰程序员无需自己手写
+
+
+
+代码演示
+
+```Java
+/**
+ *接口中的抽象方法: 默认会自动加上public abstract修饰程序员无需自己手写
+ *
+ * 成员变量默认会加上： public static final修饰  并且是静态化的变量可以直接用接口名访问，所以也叫常量
+ * 常量命名规范建议字母全部大写，多个单词用下划线连接
+ *
+ *
+ * 接口是实现
+ * class 类名 implements 接口1,接口2,接口3...{
+ *
+ * }
+ *
+ * 规范
+ *1. 必须重写实现的全部接口中所有抽象方法
+ * 2. 接口体现的是一种规范，接口对实现类是一种强制性的约束，要么全部完成接口申明的功能，要么自己也定义成抽象类。这正是一种强制性的规范
+ *
+ */
+public interface SportMan {
+    // public static final int AGE = 12 ;
+    int AGE = 12;
+
+    //    public abstract
+    void run();
+    void law(); // 遵守法律
+    String compittion(String project);
+}
+```
+
+接口的要求和规范
+
+1.必须重写实现的全部接口中所有抽象方法。
+
+2.如果一个类实现了接口，但是没有重写完全部接口的全部抽象方法，这个类也必须定义成抽象类
+
+**意义：接口体现的是一种规范，接口对实现类是一种强制性的约束，要么全部完成接口申明的功能，要么自己也定义成抽象类。这正是一种强制性的规范**
+
+ 
+
+接口和接口之间的多继承
+
+```java
+public interface Abc {
+    void go();
+    void test();
+}
+
+/**
+ * 法律规范
+ */
+public interface Law {
+    void rule();
+}
+
+
+/**
+ *  接口与接口之间是多继承的。
+ */
+public interface RunMan extends Law,Abc{
+}
+
+```
+
+类和接口之间的多实现
+
+```Java
+/**接口的实现：
+    在Java中接口是被实现的，实现接口的类称为实现类。
+    实现类的格式:*/
+class 类名 implements 接口1,接口2,接口3...{
+
+}
+```
+
+
+
+### 内部类
+
+定义：将一个类A定义在另一个类B里面，里面的那个类A就称为**内部类**，B则称为**外部类**
+
+什么时候使用内部类  ： 一个事物内部还有一个独立的事物，内部的事物脱离外部的事物无法独立使用
+
+1.人里面有一颗心脏。
+
+2.汽车内部有一个发动机
+
+**内部类的分类**
+
+1. **成员内部内**，类定义在了成员位置 (类中方法外称为成员位置，无static修饰的内部类)
+2. **静态内部类**，类定义在了成员位置 (类中方法外称为成员位置，有static修饰的内部类)
+3. **局部内部类**，类定义在方法内
+4. **匿名内部类**，没有名字的内部类，可以在方法中，也可以在类中方法外。
+
+#### 成员内部类
+
+**成员内部类特点**
+
+- 无static修饰的内部类，属于外部类对象的。
+- 宿主：外部类对象
+
+
+
+**内部类的使用格式**：
+
+```Java
+ 外部类.内部类。 // 访问内部类的类型都是用 外部类.内部类
+```
+
+*获取成员内部类对象的两种方式**：
+
+方式一：外部直接创建成员内部类的对象
+
+```Java
+外部类.内部类 变量 = new 外部类（）.new 内部类（）;
+```
+
+方式二：在外部类中定义一个方法提供内部类的对象
+
+```Java
+public Inner getInstance(){
+        return new Inner();
+    }
+```
+
+**成员内部类的细节**
+
+1.成员内部类可以被一些修饰符所修饰，比如： private，默认，protected，public，static等
+
+2.创建内部类对象时，对象中有一个隐含的Outer.this记录外部类对象的地址值
+
+3.内部类被private修饰，外界无法直接获取内部类的对象，方式二获取内部类的对象
+
+4.内部类如果想要访问外部类的成员变量，外部类的变量必须用final修饰，JDK8以前必须手动写final，JDK8之后不需要手动写，JDK默认加上
+
+
+
+内部类访问外部类对象的格式是：**外部类名.this**    ----- 内部类持有外部类的引用
+
+**内部类内存图**
+
+![image-20250702151411644](C:\Users\lzy\AppData\Roaming\Typora\typora-user-images\image-20250702151411644.png)
+
+
+
+成员内部类代码示范
+
+```Java
+package InnerClass.nomalcalss;
+
+/**
+ *内部类 ：  将一个类A定义在另一个类B里面，里面的那个类A就称为**内部类**，B则称为**外部类**。可以把内部类理解成寄生，外部类理解成宿主。
+ *
+ * 什么时候使用 ： 一个事物内部还有一个独立的事物，内部的事物脱离外部的事物无法独立使用
+ * 1. 人里面有一颗心脏。
+ * 2. 汽车内部有一个发动机。
+ *
+ * 分类
+ * 1. **成员内部内**，类定义在了成员位置 (类中方法外称为成员位置，无static修饰的内部类)
+ * 2. **静态内部类**，类定义在了成员位置 (类中方法外称为成员位置，有static修饰的内部类)
+ * 3. **局部内部类**，类定义在方法内
+ * 4. **匿名内部类**  没有名字的内部类，可以在方法中，也可以在类中方法外
+ */
+public class Outer { // // 外部类
+    private int a = 30;
+
+
+    /**
+     * 成员内部类可以被一些修饰符所修饰，比如： private，默认，protected，public，static等
+     *
+     * 对象中有一个隐含的Outer.this记录外部类对象的地址值
+     */
+    public class Inner{  // // 在成员位置定义一个类
+        private int a = 20;
+
+        public void innerMethod(){
+            int a = 10;
+            System.out.println(a); // 10   答案：a
+            System.out.println(this.a); // 20	答案：this.a
+            System.out.println(Outer.this.a); // 30	答案：Outer.this.a  内部类持有外部类的 引用
+        }
+    }
+
+
+    // 方式2
+    public Inner getInstance(){
+        return new Inner();
+    }
+}
+
+```
+
+test测试类
+
+```Java
+ public static void main(String[] args) {
+        // 宿主 外部类对象
+      //  Outer outer = new Outer();
+      //  Outer.Inner inner = outer.new Inner();
+        // 方式1
+        Outer.Inner inner = new Outer().new Inner(); // 合起来
+
+        inner.innerMethod();
+
+        // 方式2
+        Outer.Inner inner2 = new Outer().getInstance();
+```
+
+
+
+#### 静态内部类
+
+静态内部类特点：
+
+* 静态内部类是一种特殊的成员内部类。
+
+- 有static修饰，属于外部类本身的。
+- 总结：静态内部类与其他类的用法完全一样。只是访问的时候需要加上外部类.内部类。
+- **拓展1**:静态内部类可以直接访问外部类的静态成员。
+- **拓展2**:静态内部类不可以直接访问外部类的非静态成员，如果要访问需要创建外部类的对象。
+- **拓展3**:静态内部类中没有银行的Outer.this。    （静态内部类不持有外部类对象的引用）
+
+**内部类的使用格式**：
+
+```Java
+外部类.内部类。
+```
+
+调用方法的格式：
+
+* 调用非静态方法的格式：先创建对象，用对象调用
+* 调用静态方法的格式：外部类名.内部类名.方法名();
+
+代码
+
+```Java
+public class StaticOuer {   // 内部类: StaticOuer
+    private static  String sc_name = "张三";
+    private String so_name = "李四";
+
+
+    // 静态内部类: Inner
+    public static class Inner{
+        private String name;
+        public Inner(String name) {
+            this.name = name;
+        }
+
+        public void showName(){
+            System.out.println(this.name);
+            // 拓展:静态内部类可以直接访问外部类的静态成员。
+            System.out.println(sc_name);
+            // System.out.println(so_name); // 静态内部类不可以直接访问外部类的非静态成员，如果要访问需要创建外部类的对象
+
+            // 静态内部类中没有的Outer.this  静态内部类 不持有外部类引用
+        }
+
+    }
+}
+ 测试
+     
+     main(){
+       // 静态内部类  总结：静态内部类与其他类的用法完全一样。只是访问的时候需要加上外部类.内部类
+
+        StaticOuer.Inner inner1 = new StaticOuer.Inner("张三");
+        inner1.showName()
+ 	}
+   
+```
+
+#### 局部内部类
+
+**局部内部类** ：定义在**方法中**的类。
+
+定义格式
+
+```Java
+class 外部类名 {
+	数据类型 变量名;
+	
+	修饰符 返回值类型 方法名(参数列表) {
+		// …
+		class 内部类 {
+			// 成员变量
+			// 成员方法
+		}
+	}
+}
+```
+
+#### 匿名内部类
+
+**匿名内部类** ：是内部类的简化写法。他是一个隐含了名字的内部类。开发中，最常用到的内部类就是匿名内部类了。
+
+格式
+
+```Java
+new 类名或者接口名() {
+     重写方法;
+};
+```
+
+包含了：
+
+* 继承或者实现关系
+
+* 方法重写
+* 创建对象
+
+所以从语法上来讲，这个整体其实是匿名内部类对象
+
+
+
+什么时候使用
+
+如果我们希望定义一个只要使用一次的类，就可考虑使用匿名内部类。匿名内部类的本质作用**
+
+**是为了简化代码**
+
+之前我们使用接口时，似乎得做如下几步操作：
+
+1. 定义子类
+2. 重写接口中的方法
+3. 创建子类对象
+4. 调用重写后的方法
+
+```Java
+interface Swim {
+    public abstract void swimming();
+}
+
+// 1. 定义接口的实现类
+class Student implements Swim {
+    // 2. 重写抽象方法
+    @Override
+    public void swimming() {
+        System.out.println("狗刨式...");
+    }
+}
+
+public class Test {
+    public static void main(String[] args) {
+        // 3. 创建实现类对象
+        Student s = new Student();
+        // 4. 调用方法
+        s.swimming();
+    }
+}
+```
+
+我们的目的，最终只是为了调用方法，那么能不能简化一下，把以上四步合成一步呢？匿名内部类就是做这样的快捷方式。 
+
+匿名内部类使用的前提
+
+匿名内部类必须**继承一个父类**或者**实现一个父接口**。
+
+**匿名内部类格式**
+
+```Java
+new 父类名或者接口名(){
+    // 方法重写
+    @Override 
+    public void method() {
+        // 执行语句
+    }
+};
+```
+
+代码
+
+```Java
+public interface Swim { // 接口
+    void swimming();
+}
+
+public class Student implements Swim{
+    @Override
+    public void swimming() {
+        System.out.println("我是学生 我游泳");
+    }
+}
+
+public class SunYang implements Swim {
+    @Override
+    public void swimming() {
+        System.out.println("我是孙杨 游泳");
+    }
+
+
+}
+
+
+
+/**
+     *
+     * 如果我们希望定义一个只要使用一次的类，就可考虑使用匿名内部类。匿名内部类的本质作用  简化代码
+     *
+     * 格式：
+     * new 类名或者接口名() {
+     *      重写方法;
+     * };
+     * @param args
+     */
+    public static void main(String[] args) {
+        // 要调用学生对象要调用 go 方法
+        // 普通方式
+
+        // 创建实现类对象
+        Swim student = new Student();
+        goSwimming(student);
+
+        // 匿名内部类必须**继承一个父类**或者**实现一个父接口**
+        // 传入匿名内部类
+        // 结构  new  表示创建对象    Swim/父类  ： 表示这个匿名类要实现的接口  {  } ： 表示这个匿名类的类体
+        Swim s3 = new Swim() {
+            @Override
+            public void swimming() {
+                System.out.println("我是学生 我游泳");
+            }
+        };
+
+        goSwimming(s3);
+
+        Swim sunYang = new SunYang(){  // 这个匿名内部类的父类是 孙杨
+            @Override
+            public void swimming() {
+                super.swimming();
+            }
+        };
+
+        goSwimming(sunYang);
+
+        // 完美方案 ： 一步到位
+        goSwimming(new Swim() {
+            @Override
+            public void swimming() {
+                System.out.println("我是学生1 我游泳");
+            }
+        });
+
+    }
+
+
+ // 定义一个方法,模拟请一些人去游泳
+    public static void goSwimming(Swim s) {
+        s.swimming();
+    }
+```
+
+匿名内部类特点
+
+1. 定义一个没有名字的内部类
+2. 这个类实现了父类，或者父类接口
+3. 匿名内部类会创建这个没有名字的类的对象
 
 ## Java final static关键字
 

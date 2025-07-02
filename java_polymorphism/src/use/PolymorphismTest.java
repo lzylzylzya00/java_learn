@@ -50,7 +50,7 @@ public class PolymorphismTest {
         System.out.println(person.name);
 
         //编译看左边的父类中有没有show这个方法，没有就报错
-        //在实际运行的时候，运行的是子类中的show方法
+        //在实际运行的时候，运行的是学生子类中的show方法
         person.show();
 
         /**
@@ -58,7 +58,7 @@ public class PolymorphismTest {
          * 也就是说，**不能调用**子类拥有，而父类没有的方法。编译都错误
          */
         // 调用不了子类特有的方法
-      //  student.show1();
+       // person.show1();
 
 
         /**
